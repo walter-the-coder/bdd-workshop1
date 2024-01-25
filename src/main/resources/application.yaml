@@ -1,0 +1,32 @@
+server:
+    port: 8080
+
+management:
+    server.port: 8081
+    endpoint:
+        health:
+            show-details: always
+            status.order: DOWN, OUT_OF_SERVICE, OBSERVE, UNKNOWN, UP
+        env.show-values: ALWAYS
+        configprops.show-values: ALWAYS
+    info.env.enabled: true
+    endpoints.web.exposure.include: "*"
+
+spring:
+    profiles:
+        active: local
+    flyway:
+        enabled: true
+    datasource:
+        driver-class-name: org.postgresql.Driver
+
+springdoc:
+    swagger-ui:
+        path: /docs/index.html
+
+clients:
+    authorization:
+        url: ${AUTHORIZATION_URL:http://localhost:8080}
+
+security:
+    enabled: true

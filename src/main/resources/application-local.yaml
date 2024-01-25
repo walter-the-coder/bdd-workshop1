@@ -1,0 +1,15 @@
+---
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:${DATABASE_PORT:5432}/bdd_workshop1
+        username: ${DATABASE_USER:postgres}
+        password: ${DATABASE_PASSWORD:postgres}
+
+    flyway:
+        url: ${spring.datasource.url}
+        user: ${spring.datasource.username}
+        password: ${spring.datasource.password}
+        baseline-on-migrate: true
+
+security:
+    enabled: false
