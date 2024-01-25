@@ -2,6 +2,9 @@ package com.bdd.workshop.service;
 
 import java.util.Map;
 
+import com.bdd.workshop.exceptionHandling.CustomRuntimeException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
@@ -29,8 +32,17 @@ public class ReceptionService {
         authorizationService.controlUserAccessToOrganisation(data.submitterId(), data.organisationNumber());
 
         Map<String, String> validationErrors = inputValidationService.validate(data);
+
         if (!validationErrors.isEmpty()) {
-            return new ReceptionResponse(validationErrors);
+            String errorMessage = StringUtils.joinWith(":",validationErrors.values())
+                    .replace("[","")
+                    .replace("]","");
+            throw new CustomRuntimeException(
+                    "BAD_REQUEST",
+                    errorMessage,
+                    null,
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         transactionRepository.storeReceivedData(data);
