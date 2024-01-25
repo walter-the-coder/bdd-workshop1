@@ -3,6 +3,7 @@ package com.bdd.workshop.service;
 import org.springframework.stereotype.Service;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
+import com.bdd.workshop.controller.dto.ReceptionResponse;
 import com.bdd.workshop.repository.TransactionRepository;
 
 @Service
@@ -19,9 +20,11 @@ public class ReceptionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public void handleReceivedData(ReceptionDto data) {
+    public ReceptionResponse handleReceivedData(ReceptionDto data) {
         authorizationService.controlUserAccessToOrganisation(data.submitterId(), data.organisationNumber());
 
         transactionRepository.storeReceivedData(data);
+
+        return new ReceptionResponse(data.organisationNumber());
     }
 }

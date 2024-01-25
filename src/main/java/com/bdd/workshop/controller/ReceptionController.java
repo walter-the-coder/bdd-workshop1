@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
+import com.bdd.workshop.controller.dto.ReceptionResponse;
 import com.bdd.workshop.service.ReceptionService;
 
 @RestController
@@ -20,9 +21,9 @@ public class ReceptionController {
     }
 
     @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void handleData(
+    public ReceptionResponse handleData(
         @RequestBody ReceptionDto data
     ) {
-        receptionService.handleReceivedData(data);
+        return receptionService.handleReceivedData(data);
     }
 }
