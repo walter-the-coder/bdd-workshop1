@@ -1,15 +1,35 @@
 # Getting Started
 
-### Installing PostGreSQL database for running the application on local machine
+### Windows - Installing PostgreSQL database for running application local machine
+- Go to https://www.enterprisedb.com/downloads/postgres-postgresql-downloads and download PostgreSQL for windows
+- Run the installer. Choose whatever file location that best suits you. Username and password should be postgres / postgres
+- Full guide can be found here: https://www.postgresqltutorial.com/postgresql-getting-started/install-postgresql/
+Make sure you add the PostgreSQL bin directory to the PATH environment variable
+
+#### Windows - Connect to PostgreSQL
+In the Windows Command Prompt, run the command where "userName" is the username you chose in the previous step:
+    
+    psql -U userName
+
+Enter your password when prompted.
+
+#### Windows - Change password and create database
+
+    ALTER USER postgres with password 'postgres';
+    CREATE DATABASE bdd_workshop1;
+    \q   <-- quit
+
+### Ubuntu / Linux - Installing PostgreSQL database for running the application on local machine
 Run the following command from a terminal window:
     
     sudo apt update sudo apt install postgresql postgresql-contrib
  
-#### Connect to PostgreSQL
+#### Ubuntu / Linux - Connect to PostgreSQL
+Open the command line and type in the following
     sudo -i -u postgres
     psql
 
-#### Change password and create database
+#### Ubuntu / Linux - Change password and create database
 
     alter user postgres with password 'postgres';
     create database bdd_workshop1;
