@@ -28,4 +28,8 @@ public record ReceptionResponse(
             validationErrors
         );
     }
+
+    public boolean isValid() {
+        return validationErrors().isEmpty();
+    }
 }

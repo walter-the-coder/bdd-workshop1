@@ -1,6 +1,7 @@
 package com.bdd.workshop.controller;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +22,15 @@ public class ReceptionController {
     }
 
     @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ReceptionResponse handleData(
+    public ResponseEntity<ReceptionResponse> handleData(
         @RequestBody ReceptionDto data
     ) {
-        return receptionService.handleReceivedData(data);
+        ReceptionResponse response = receptionService.handleReceivedData(data);
+
+        if (response.isValid()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }
