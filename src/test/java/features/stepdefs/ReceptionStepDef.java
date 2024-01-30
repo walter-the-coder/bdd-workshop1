@@ -28,12 +28,12 @@ public class ReceptionStepDef {
     }
 
     @When("the following data is submitted")
-    public void the_following_data_is_received(Map<String, String> dataTable) {
-        ReceptionDto data = ReceptionDtoUtil.getReceptionDto(dataTable);
+    public void the_VAT_report_is_submitted(Map<String, String> dataTable) {
+        ReceptionDto vatReport = ReceptionDtoUtil.getReceptionDto(dataTable);
         try {
             response = restClient.post()
                 .uri("/api/reception/")
-                .body(data)
+                .body(vatReport)
                 .retrieve()
                 .toBodilessEntity();
         } catch (HttpClientErrorException e) {

@@ -1,5 +1,7 @@
 package com.bdd.workshop.repository;
 
+import static com.bdd.workshop.ApplicationConfig.DEFAULT_OBJECT_MAPPER;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -11,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
+import com.bdd.workshop.controller.dto.VATCode;
+import com.bdd.workshop.controller.dto.VATLine;
+import com.bdd.workshop.controller.dto.VATLines;
 import com.bdd.workshop.type.OrganisationNumber;
 import com.bdd.workshop.type.PersonId;
 import com.bdd.workshop.type.TaxCategory;
@@ -26,7 +31,7 @@ public class TransactionRepositoryTest {
         EmbeddedPostgres pg = EmbeddedPostgres.start();
         Flyway.configure().dataSource(pg.getPostgresDatabase()).load().migrate();
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(pg.getPostgresDatabase());
-        transactionRepository = new TransactionRepository(jdbcTemplate);
+        transactionRepository = new TransactionRepository(jdbcTemplate, DEFAULT_OBJECT_MAPPER);
     }
 
     @Test
@@ -37,7 +42,19 @@ public class TransactionRepositoryTest {
             TaxCategory.NORMAL,
             2024,
             TaxationPeriodType.JAN_FEB,
-            LocalDate.of(2024, 1, 1).atStartOfDay()
+            LocalDate.of(2024, 1, 1).atStartOfDay(),
+            new VATLines(
+                List.of(
+                    new VATLine(
+                        VATCode.VAT_CODE_1,
+                        -1000.0
+                    ),
+                    new VATLine(
+                        VATCode.VAT_CODE_3,
+                        50000.0
+                    )
+                )
+            )
         );
 
         Assertions.assertDoesNotThrow(() -> transactionRepository.storeReceivedData(data));
