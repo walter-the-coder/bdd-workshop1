@@ -13,5 +13,6 @@ public record ReceptionDto(
     TaxCategory category,
     Integer year,
     TaxationPeriodType taxationPeriodType,
-    LocalDateTime timeOfSubmission
+    LocalDateTime timeOfSubmission,
+    VATLines vatLines
 ) { }

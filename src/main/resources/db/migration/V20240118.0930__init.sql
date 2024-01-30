@@ -8,5 +8,6 @@ CREATE TABLE transactions
     taxationPeriodType TEXT                                NOT NULL,
     timeOfSubmission   TIMESTAMP,
     created            TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    status             TEXT                                NOT NULL
+    status             TEXT                                NOT NULL,
+    vatLines           JSONB                               NOT NULL
 );
