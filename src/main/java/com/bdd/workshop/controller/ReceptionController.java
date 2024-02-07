@@ -21,16 +21,11 @@ public class ReceptionController {
         this.receptionService = receptionService;
     }
 
-    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/submit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReceptionResponse> handleData(
         @RequestBody ReceptionDto data
     ) {
         ReceptionResponse response = receptionService.handleReceivedData(data);
-
-        if (response.isValid()) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return ResponseEntity.ok(response);
     }
 }

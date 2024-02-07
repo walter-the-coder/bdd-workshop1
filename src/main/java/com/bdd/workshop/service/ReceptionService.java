@@ -1,7 +1,5 @@
 package com.bdd.workshop.service;
 
-import java.util.Map;
-
 import org.springframework.stereotype.Service;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
@@ -28,10 +26,7 @@ public class ReceptionService {
     public ReceptionResponse handleReceivedData(ReceptionDto data) {
         authorizationService.controlUserAccessToOrganisation(data.submitterId(), data.organisationNumber());
 
-        Map<String, String> validationErrors = inputValidationService.validate(data);
-        if (!validationErrors.isEmpty()) {
-            return new ReceptionResponse(validationErrors);
-        }
+        inputValidationService.validateOrThrowError(data);
 
         transactionRepository.storeReceivedData(data);
 

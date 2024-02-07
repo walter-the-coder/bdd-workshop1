@@ -1,12 +1,11 @@
 package features.stepdefs;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
 import org.junit.Assert;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClient;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
@@ -19,7 +18,7 @@ import io.cucumber.java.en.When;
 public class ReceptionStepDef {
     private final RestClient restClient;
     private ResponseEntity<Void> response;
-    private HttpClientErrorException exception;
+    private HttpStatusCodeException exception;
 
     public ReceptionStepDef(
         RestClient restClient
@@ -32,11 +31,11 @@ public class ReceptionStepDef {
         ReceptionDto vatReport = ReceptionDtoUtil.getReceptionDto(dataTable);
         try {
             response = restClient.post()
-                .uri("/api/reception/")
+                .uri("/api/reception/submit")
                 .body(vatReport)
                 .retrieve()
                 .toBodilessEntity();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpStatusCodeException e) {
             exception = e;
         }
     }
@@ -48,12 +47,12 @@ public class ReceptionStepDef {
     }
 
     @Then("the response should be the following error")
-    public void the_response_should_be_the_following_error(Map<String, String> dataTable) throws IOException {
+    public void the_response_should_be_the_following_error(Map<String, String> dataTable) {
         Assert.assertNull(response);
-        Assert.assertEquals(exception.getStatusCode().value(), Integer.parseInt(dataTable.get("statusCode")));
+        Assert.assertEquals(Integer.parseInt(dataTable.get("statusCode")), exception.getStatusCode().value());
         ErrorResponse errorResponse = exception.getResponseBodyAs(ErrorResponse.class);
         Objects.requireNonNull(errorResponse);
-        Assert.assertEquals(errorResponse.getErrorCode(), dataTable.get("errorCode"));
-        Assert.assertEquals(errorResponse.getErrorMessage(), dataTable.get("errorMessage"));
+        Assert.assertEquals(dataTable.get("errorCode"), errorResponse.getErrorCode());
+        Assert.assertEquals(dataTable.get("errorMessage"), errorResponse.getErrorMessage());
     }
 }

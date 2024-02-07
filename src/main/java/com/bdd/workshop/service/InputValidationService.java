@@ -3,11 +3,14 @@ package com.bdd.workshop.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
 import com.bdd.workshop.controller.dto.VATLine;
 import com.bdd.workshop.controller.dto.VATLines;
+import com.bdd.workshop.exceptionHandling.CustomRuntimeException;
 import com.bdd.workshop.type.TaxationPeriodType;
 
 @Service
@@ -23,6 +26,23 @@ public class InputValidationService {
         validateVATLines(data.vatLines(), validationErrors);
 
         return validationErrors;
+    }
+
+    public void validateOrThrowError(ReceptionDto data) {
+        Map<String, String> validationErrors = validate(data);
+
+        if (!validationErrors.isEmpty()) {
+            String errorMessage = StringUtils.joinWith(":", validationErrors.values())
+                .replace("[", "")
+                .replace("]", "");
+
+            throw new CustomRuntimeException(
+                "BAD_REQUEST",
+                errorMessage,
+                null,
+                HttpStatus.BAD_REQUEST
+            );
+        }
     }
 
     public void validateYear(Integer year, Map<String, String> validationErrors) {
