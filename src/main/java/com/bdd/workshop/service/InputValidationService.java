@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 import com.bdd.workshop.controller.dto.ReceptionDto;
 import com.bdd.workshop.controller.dto.VATLine;
 import com.bdd.workshop.controller.dto.VATLines;
+import com.bdd.workshop.controller.dto.ValidationResponse;
 import com.bdd.workshop.exceptionHandling.CustomRuntimeException;
 import com.bdd.workshop.type.TaxationPeriodType;
 
 @Service
 public class InputValidationService {
 
-    public Map<String, String> validate(ReceptionDto data) {
+    public ValidationResponse validate(ReceptionDto data) {
         Map<String, String> validationErrors = new HashMap<>();
 
         validateYear(data.year(), validationErrors);
@@ -25,14 +26,14 @@ public class InputValidationService {
 
         validateVATLines(data.vatLines(), validationErrors);
 
-        return validationErrors;
+        return new ValidationResponse(validationErrors);
     }
 
     public void validateOrThrowError(ReceptionDto data) {
-        Map<String, String> validationErrors = validate(data);
+        ValidationResponse validationResponse = validate(data);
 
-        if (!validationErrors.isEmpty()) {
-            String errorMessage = StringUtils.joinWith(":", validationErrors.values())
+        if (!validationResponse.validationErrors().isEmpty()) {
+            String errorMessage = StringUtils.joinWith(":", validationResponse.validationErrors().values())
                 .replace("[", "")
                 .replace("]", "");
 

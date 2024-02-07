@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
 import com.bdd.workshop.controller.dto.ReceptionResponse;
+import com.bdd.workshop.controller.dto.ValidationResponse;
+import com.bdd.workshop.service.InputValidationService;
 import com.bdd.workshop.service.ReceptionService;
 
 @RestController
@@ -16,9 +18,23 @@ import com.bdd.workshop.service.ReceptionService;
 public class ReceptionController {
 
     private final ReceptionService receptionService;
+    private final InputValidationService inputValidationService;
 
-    public ReceptionController(ReceptionService receptionService) {
+    public ReceptionController(
+        ReceptionService receptionService,
+        InputValidationService inputValidationService
+    ) {
         this.receptionService = receptionService;
+        this.inputValidationService = inputValidationService;
+    }
+
+    @PostMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ValidationResponse> validate(
+        @RequestBody ReceptionDto data
+    ) {
+        ValidationResponse response = inputValidationService.validate(data);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/submit", produces = MediaType.APPLICATION_JSON_VALUE)
