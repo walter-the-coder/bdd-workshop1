@@ -27,4 +27,9 @@ public enum VATCode {
     public static VATCode fromCode(Integer code) {
         return Arrays.stream(VATCode.values()).filter(it -> Objects.equals(it.code, code)).findFirst().get();
     }
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }

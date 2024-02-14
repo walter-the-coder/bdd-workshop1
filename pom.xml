@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.1</version>
+    <version>2.7.18</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
 
@@ -16,9 +16,9 @@
   <description>Workshop project for BDD (behaviour driven development) with RRA and NTA</description>
 
   <properties>
-    <java.version>17</java.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
 
-    <springdoc.version>2.3.0</springdoc.version>
     <postgresql.version>42.7.1</postgresql.version>
     <flyway.version>9.22.3</flyway.version>
 
@@ -26,7 +26,6 @@
     <cucumber.version>7.14.1</cucumber.version>
     <cucumber-messages.version>22.0.0</cucumber-messages.version>
     <junit-jupiter.version>5.10.1</junit-jupiter.version>
-    <wiremock.version>3.3.1</wiremock.version>
     <zonky-spring.version>2.4.0</zonky-spring.version>
     <zonky-embedded-postgres.version>2.0.6</zonky-embedded-postgres.version>
     <mockito.version>5.9.0</mockito.version>
@@ -46,23 +45,25 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>${springdoc.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>${postgresql.version}</version>
     </dependency>
     <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>4.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.14.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
       <version>${flyway.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-blackbird</artifactId>
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>
@@ -152,9 +153,9 @@
 
     <!-- Mock HTTP-server -->
     <dependency>
-      <groupId>org.wiremock</groupId>
-      <artifactId>wiremock-standalone</artifactId>
-      <version>${wiremock.version}</version>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock-jre8-standalone</artifactId>
+      <version>2.35.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -180,6 +181,15 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -1,13 +1,27 @@
 package com.bdd.workshop.service;
 
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_1;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_10;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_2;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_3;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_4;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_5;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_6;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_7;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_8;
+import static com.bdd.workshop.controller.dto.VATCode.VAT_CODE_9;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
+import com.bdd.workshop.controller.dto.VATCode;
 import com.bdd.workshop.controller.dto.VATLine;
 import com.bdd.workshop.controller.dto.VATLines;
 import com.bdd.workshop.controller.dto.ValidationResponse;
@@ -20,11 +34,11 @@ public class InputValidationService {
     public ValidationResponse validate(ReceptionDto data) {
         Map<String, String> validationErrors = new HashMap<>();
 
-        validateYear(data.year(), validationErrors);
+        validateYear(data.getYear(), validationErrors);
 
-        validateTaxationPeriodType(data.taxationPeriodType(), validationErrors);
+        validateTaxationPeriodType(data.getTaxationPeriodType(), validationErrors);
 
-        validateVATLines(data.vatLines(), validationErrors);
+        validateVATLines(data.getVatLines(), validationErrors);
 
         return new ValidationResponse(validationErrors);
     }
@@ -32,8 +46,8 @@ public class InputValidationService {
     public void validateOrThrowError(ReceptionDto data) {
         ValidationResponse validationResponse = validate(data);
 
-        if (!validationResponse.validationErrors().isEmpty()) {
-            String errorMessage = StringUtils.joinWith(":", validationResponse.validationErrors().values())
+        if (!validationResponse.getValidationErrors().isEmpty()) {
+            String errorMessage = StringUtils.joinWith(":", validationResponse.getValidationErrors().values())
                 .replace("[", "")
                 .replace("]", "");
 
@@ -64,27 +78,45 @@ public class InputValidationService {
     }
 
     public void validateVATLines(VATLines vatLines, Map<String, String> validationErrors) {
-        for (VATLine vatLine : vatLines.vatLines()) {
+        for (VATLine vatLine : vatLines.getVatLines()) {
             validateVATLine(vatLine, validationErrors);
         }
     }
 
     public void validateVATLine(VATLine vatLine, Map<String, String> validationErrors) {
-        switch (vatLine.vatCode()) {
-        case VAT_CODE_1, VAT_CODE_2, VAT_CODE_8, VAT_CODE_9, VAT_CODE_10 -> {
-            if (vatLine.amount() > 0) {
+        Set<VATCode> allowedPositiveCodes = new HashSet<>();
+        allowedPositiveCodes.add(VAT_CODE_1);
+        allowedPositiveCodes.add(VAT_CODE_2);
+        allowedPositiveCodes.add(VAT_CODE_8);
+        allowedPositiveCodes.add(VAT_CODE_9);
+        allowedPositiveCodes.add(VAT_CODE_10);
+
+        Set<VATCode> allowedNegativeCodes = new HashSet<>();
+        allowedNegativeCodes.add(VAT_CODE_3);
+        allowedNegativeCodes.add(VAT_CODE_4);
+        allowedNegativeCodes.add(VAT_CODE_5);
+        allowedNegativeCodes.add(VAT_CODE_6);
+        allowedNegativeCodes.add(VAT_CODE_7);
+
+        if (allowedPositiveCodes.contains(vatLine.getVatCode())) {
+            if (vatLine.getAmount() > 0) {
                 validationErrors.put("vatLine",
-                    "Invalid VAT amount for VAT code " + vatLine.vatCode()
+                    "Invalid VAT amount for VAT code " + vatLine.getVatCode()
                         + ". The amount should be zero or negative!");
             }
-        }
-        case VAT_CODE_3, VAT_CODE_4, VAT_CODE_5, VAT_CODE_6, VAT_CODE_7 -> {
-            if (vatLine.amount() < 0) {
+        } else if (allowedNegativeCodes.contains(vatLine.getVatCode())) {
+            if (vatLine.getAmount() < 0) {
                 validationErrors.put("vatLine",
-                    "Invalid VAT amount for VAT code " + vatLine.vatCode()
+                    "Invalid VAT amount for VAT code " + vatLine.getVatCode()
                         + ". The amount should be zero or positive!");
             }
-        }
+        } else {
+            throw new CustomRuntimeException(
+                "INVALID_VAT_VODE",
+                "Invalid VAT code " + vatLine.getVatCode(),
+                null,
+                HttpStatus.BAD_REQUEST
+            );
         }
     }
 }

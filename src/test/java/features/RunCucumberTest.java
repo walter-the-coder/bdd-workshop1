@@ -38,8 +38,7 @@ import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 )
 @SpringBootTest(
     classes = { Main.class },
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-    useMainMethod = SpringBootTest.UseMainMethod.ALWAYS
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
 )
 public class RunCucumberTest {
     @Before

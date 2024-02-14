@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 
 @Configuration
 @Import(CustomWebExceptionHandler.class)
@@ -22,10 +21,9 @@ public class ApplicationConfig {
 
     @Bean
     public AuthorizationClient authorizationClient(
-        @Value("${clients.authorization.url}") String baseUrl,
-        ObjectMapper objectMapper
+        @Value("${clients.authorization.url}") String baseUrl
     ) {
-        return new AuthorizationClient(baseUrl, objectMapper);
+        return new AuthorizationClient(baseUrl);
     }
 
     @Bean
@@ -40,6 +38,5 @@ public class ApplicationConfig {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .addModule(new Jdk8Module())
             .addModule(new JavaTimeModule())
-            .addModule(new BlackbirdModule())
             .build();
 }

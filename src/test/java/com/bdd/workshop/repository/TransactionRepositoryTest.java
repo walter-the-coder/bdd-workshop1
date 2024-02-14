@@ -4,6 +4,7 @@ import static com.bdd.workshop.ApplicationConfig.DEFAULT_OBJECT_MAPPER;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.flywaydb.core.Flyway;
@@ -36,26 +37,28 @@ public class TransactionRepositoryTest {
 
     @Test
     public void testStoreReceivedData() {
-        ReceptionDto data = new ReceptionDto(
-            new OrganisationNumber("123456789"),
-            new PersonId("01012012345"),
-            TaxCategory.NORMAL,
-            2024,
-            TaxationPeriodType.JAN_FEB,
-            LocalDate.of(2024, 1, 1).atStartOfDay(),
-            new VATLines(
-                List.of(
-                    new VATLine(
-                        VATCode.VAT_CODE_1,
-                        -1000.0
-                    ),
-                    new VATLine(
-                        VATCode.VAT_CODE_3,
-                        50000.0
-                    )
-                )
+        List<VATLine> vatLines = new ArrayList<>();
+        vatLines.add(new VATLine(
+                VATCode.VAT_CODE_1.code,
+                -1000.0
             )
         );
+        vatLines.add(
+            new VATLine(
+                VATCode.VAT_CODE_3.code,
+                50000.0
+            )
+        );
+
+        ReceptionDto data = ReceptionDto.with()
+            .withOrganisationNumber(new OrganisationNumber("123456789"))
+            .withSubmitterId(new PersonId("01012012345"))
+            .withCategory(TaxCategory.NORMAL)
+            .withYear(2024)
+            .withTaxationPeriodType(TaxationPeriodType.JAN_FEB)
+            .withTimeOfSubmission(LocalDate.of(2024, 1, 1).atStartOfDay())
+            .withVatLines(new VATLines(vatLines))
+            .build();
 
         Assertions.assertDoesNotThrow(() -> transactionRepository.storeReceivedData(data));
 
