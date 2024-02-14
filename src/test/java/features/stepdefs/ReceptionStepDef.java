@@ -14,6 +14,7 @@ import com.bdd.workshop.controller.dto.ValidationResponse;
 import com.bdd.workshop.exceptionHandling.ErrorResponse;
 
 import features.stepdefs.util.ReceptionDtoUtil;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -61,6 +62,16 @@ public class ReceptionStepDef {
     public void the_response_should_be_ok() {
         Assert.assertNull(exception);
         Assert.assertTrue(submitResponse.getStatusCode().is2xxSuccessful());
+    }
+
+    @And("the reciept message should be {string}")
+    public void the_reciept_message_should_be(String message) {
+        Assert.assertNotNull(submitResponse);
+        ReceptionResponse receptionResponse = submitResponse.getBody();
+        Assert.assertNotNull(receptionResponse);
+        String recieptMessage = receptionResponse.message();
+        Assert.assertNotNull(recieptMessage);
+        Assert.assertEquals(message, recieptMessage);
     }
 
     @Then("the response should return OK with the following validation errors")
