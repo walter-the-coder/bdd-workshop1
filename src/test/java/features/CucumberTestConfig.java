@@ -1,11 +1,12 @@
 package features;
 
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import com.bdd.workshop.ApplicationConfig;
 
@@ -20,9 +21,9 @@ public class CucumberTestConfig {
     }
 
     @Bean
-    RestClient restClient() {
-        return RestClient.builder()
-            .baseUrl("http://localhost:8080")
+    public RestTemplate restTemplate() {
+        return new RestTemplateBuilder()
+            .rootUri("http://localhost:8080")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
     }

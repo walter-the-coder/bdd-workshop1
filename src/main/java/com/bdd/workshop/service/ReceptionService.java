@@ -24,12 +24,12 @@ public class ReceptionService {
     }
 
     public ReceptionResponse handleReceivedData(ReceptionDto data) {
-        authorizationService.controlUserAccessToOrganisation(data.submitterId(), data.organisationNumber());
+        authorizationService.controlUserAccessToOrganisation(data.getSubmitterId(), data.getOrganisationNumber());
 
         inputValidationService.validateOrThrowError(data);
 
         transactionRepository.storeReceivedData(data);
 
-        return new ReceptionResponse(data.organisationNumber());
+        return new ReceptionResponse(data.getOrganisationNumber());
     }
 }

@@ -16,15 +16,15 @@ import com.bdd.workshop.type.TaxationPeriodType;
 
 public final class ReceptionDtoUtil {
     public static ReceptionDto getReceptionDto(Map<String, String> dataTable) {
-        return new ReceptionDto(
-            new OrganisationNumber(dataTable.get("organisationNumber")),
-            new PersonId(dataTable.get("submitterId")),
-            TaxCategory.valueOf(dataTable.get("taxCategory")),
-            Integer.parseInt(dataTable.get("year")),
-            TaxationPeriodType.valueOf(dataTable.get("taxationPeriod")),
-            LocalDateTime.parse(dataTable.get("timeOfSubmission")),
-            getVATLines(dataTable)
-        );
+        return ReceptionDto.with()
+            .withOrganisationNumber(new OrganisationNumber(dataTable.get("organisationNumber")))
+            .withSubmitterId(new PersonId(dataTable.get("submitterId")))
+            .withCategory(TaxCategory.valueOf(dataTable.get("taxCategory")))
+            .withYear(Integer.parseInt(dataTable.get("year")))
+            .withTaxationPeriodType(TaxationPeriodType.valueOf(dataTable.get("taxationPeriod")))
+            .withTimeOfSubmission(LocalDateTime.parse(dataTable.get("timeOfSubmission")))
+            .withVatLines(getVATLines(dataTable))
+            .build();
     }
 
     public static VATLines getVATLines(Map<String, String> dataTable) {
@@ -36,7 +36,7 @@ public final class ReceptionDtoUtil {
         ) {
             vatLines.add(
                 new VATLine(
-                    VATCode.fromCode(Integer.parseInt(dataTable.get(vatLinePrefix(lineIndex) + ".vatCode"))),
+                    Integer.parseInt(dataTable.get(vatLinePrefix(lineIndex) + ".vatCode")),
                     Double.parseDouble(dataTable.get(vatLinePrefix(lineIndex) + ".amount"))
                 )
             );

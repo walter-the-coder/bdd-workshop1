@@ -27,19 +27,19 @@ public abstract class Simulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Simulator.class);
 
     public Map<Pattern, Function<Request, ResponseDefinitionBuilder>> getMapping() {
-        return Map.of();
+        return new HashMap<>();
     }
 
     public Map<Pattern, Function<Request, ResponseDefinitionBuilder>> postMapping() {
-        return Map.of();
+        return new HashMap<>();
     }
 
     public Map<Pattern, Function<Request, ResponseDefinitionBuilder>> putMapping() {
-        return Map.of();
+        return new HashMap<>();
     }
 
     public Map<Pattern, Function<Request, ResponseDefinitionBuilder>> deleteMapping() {
-        return Map.of();
+        return new HashMap<>();
     }
 
     protected static ObjectMapper objectMapper = DEFAULT_OBJECT_MAPPER;
@@ -67,29 +67,29 @@ public abstract class Simulator {
             throw new RuntimeException("Simulator already exists");
         }
 
-        Map<RequestMethod, Map<Pattern, Function<Request, ResponseDefinitionBuilder>>> restMapping = Map.of(
-            RequestMethod.GET, getMapping(),
-            RequestMethod.POST, postMapping(),
-            RequestMethod.PUT, putMapping(),
-            RequestMethod.DELETE, deleteMapping()
-        );
+        Map<RequestMethod, Map<Pattern, Function<Request, ResponseDefinitionBuilder>>> restMapping = new HashMap<>();
+        restMapping.put(RequestMethod.GET, getMapping());
+        restMapping.put(RequestMethod.POST, postMapping());
+        restMapping.put(RequestMethod.PUT, putMapping());
+        restMapping.put(RequestMethod.DELETE, deleteMapping());
 
         Map<RequestMethod, Map<Pattern, Function<Request, ResponseDefinitionBuilder>>> mappedMappings = new HashMap<>();
 
-        for (var entry : restMapping.entrySet()) {
+        for (Map.Entry<RequestMethod, Map<Pattern, Function<Request, ResponseDefinitionBuilder>>> entry :
+            restMapping.entrySet()) {
             RequestMethod method = entry.getKey();
             Map<Pattern, Function<Request, ResponseDefinitionBuilder>> mappings = entry.getValue();
             Map<Pattern, Function<Request, ResponseDefinitionBuilder>> mapped = new HashMap<>();
 
-            for (var mapping : mappings.entrySet()) {
-                Pattern pattern = mapping.getKey();
-                Function<Request, ResponseDefinitionBuilder> endepunkt = mapping.getValue();
-
-                if (pattern.pattern().contains("?")) {
-                    throw new RuntimeException("Invalid regex in URL matcher. Don't use query params in pattern matchers!");
+            for (Map.Entry<Pattern, Function<Request, ResponseDefinitionBuilder>> mapping : mappings.entrySet()) {
+                String patternString = mapping.getKey().pattern();
+                if (patternString.contains("?")) {
+                    throw new RuntimeException(
+                        "Invalid regex in URL matcher. Don't use query params in pattern matchers!");
                 }
 
-                mapped.put(Pattern.compile(pattern.pattern()), endepunkt);
+                Pattern pattern = Pattern.compile(patternString);
+                mapped.put(pattern, mapping.getValue());
             }
 
             mappedMappings.put(method, mapped);
@@ -140,15 +140,15 @@ public abstract class Simulator {
     private void setRequestListener() {
         wireMockServer.addMockServiceRequestListener((request, response) -> {
             if (verbose) {
-                LOGGER.debug(
-                    "[%s] Got request: %s %s - sending status %d".formatted(
-                        name,
-                        request.getMethod(),
-                        request.getUrl(),
-                        response.getStatus()
-                    )
-                );
-                LOGGER.debug("[%s] Request body: %s".formatted(name, request.getBodyAsString()));
+                String logMessage = String.format("[%s] Got request: %s %s - sending status %d",
+                    name, request.getMethod(), request.getUrl(), response.getStatus());
+                LOGGER.debug(logMessage);
+
+                String reqBody = request.getBodyAsString();
+                if (reqBody != null) {
+                    logMessage = String.format("[%s] Request body: %s", name, reqBody);
+                    LOGGER.debug(logMessage);
+                }
             }
         });
     }

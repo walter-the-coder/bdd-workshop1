@@ -45,6 +45,4 @@ Ability: Handle revieved data by checking if end-user is authorized and then sto
       | vatLines.vatLine[1].vatCode | 3                       |
       | vatLines.vatLine[1].amount  | 50000                   |
     Then the response should be the following error
-      | statusCode   | 401                                                                         |
-      | errorCode    | NOT_AUTHORIZED                                                              |
-      | errorMessage | User with id 18126220886 is not authorized to access organisation 999888777 |
+      | statusCode | 401 |

@@ -28,7 +28,7 @@ public final class AuthorizationServerSimulator extends Simulator {
     }
 
     public static AuthorizationServerSimulator getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new AuthorizationServerSimulator();
         }
 
@@ -37,10 +37,9 @@ public final class AuthorizationServerSimulator extends Simulator {
 
     @Override
     public Map<Pattern, Function<Request, ResponseDefinitionBuilder>> postMapping() {
-        return Map.of(
-            Pattern.compile("/authorization"),
-            this::getAuthorizedOrganisations
-        );
+        Map<Pattern, Function<Request, ResponseDefinitionBuilder>> postMappings = new HashMap<>();
+        postMappings.put(Pattern.compile("/authorization"), this::getAuthorizedOrganisations);
+        return postMappings;
     }
 
     private final Map<PersonId, List<OrganisationNumber>> authorizedOrganisations =
@@ -56,7 +55,7 @@ public final class AuthorizationServerSimulator extends Simulator {
     }
 
     public ResponseDefinitionBuilder getAuthorizedOrganisations(Request request) {
-        PersonId personId = readJson(request, AuthorizationRequest.class).personId();
+        PersonId personId = readJson(request, AuthorizationRequest.class).getPersonId();
         AuthorizationResponse response = new AuthorizationResponse(
             authorizedOrganisations.get(personId)
         );

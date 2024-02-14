@@ -2,14 +2,6 @@ package features.simulator.common;
 
 import static wiremock.org.apache.commons.lang3.StringUtils.substringBefore;
 
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformerV2;
-import com.github.tomakehurst.wiremock.http.Fault;
-import com.github.tomakehurst.wiremock.http.Request;
-import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.http.ResponseDefinition;
-import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
@@ -19,8 +11,16 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.common.FileSource;
+import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
+import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.http.Request;
+import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
-public class FunctionMapResponseTransformer implements ResponseDefinitionTransformerV2 {
+public class FunctionMapResponseTransformer extends ResponseDefinitionTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionMapResponseTransformer.class);
     private final Simulator simulator;
     private final Map<RequestMethod, Map<Pattern, Function<Request, ResponseDefinitionBuilder>>> restMapping;
@@ -39,11 +39,12 @@ public class FunctionMapResponseTransformer implements ResponseDefinitionTransfo
     }
 
     @Override
-    public ResponseDefinition transform(ServeEvent event) {
-        return transform(event.getRequest());
-    }
-
-    private ResponseDefinition transform(Request request) {
+    public ResponseDefinition transform(
+        Request request,
+        ResponseDefinition responseDefinition,
+        FileSource fileSource,
+        Parameters parameters
+    ) {
         if (simulator.isSimulatedDowntime()) {
             return ResponseDefinitionBuilder.responseDefinition()
                 .withFault(Fault.CONNECTION_RESET_BY_PEER)
@@ -114,4 +115,5 @@ public class FunctionMapResponseTransformer implements ResponseDefinitionTransfo
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
     private static final Integer HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
     private static final Integer HTTP_STATUS_METHOD_NOT_ALLOWED = 405;
+
 }
