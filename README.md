@@ -40,7 +40,7 @@ Open the command line and type in the following
     \q   <-- quit
 
 ### Access to API documentation when running on local machine
-    http://localhost:8080/docs/swagger-ui/index.html
+    http://localhost:8080/docs/index.html
 
 ### Reference Documentation
 For further reference, please consider the following sections:
