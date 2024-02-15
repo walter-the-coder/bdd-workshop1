@@ -1,6 +1,9 @@
 # Getting Started
 
-### Windows - Installing PostgreSQL database for running application local machine
+## Nice to know
+You don't have to install PostgreSQL to unless you want to run the application locally. When running and building the project with maven commands, we use an embedded PostgreSQL database
+
+### (Optional) Windows - Installing PostgreSQL database for running application local machine
 - Go to https://www.enterprisedb.com/downloads/postgres-postgresql-downloads and download PostgreSQL for windows
 - Run the installer. Choose whatever file location that best suits you. Username and password should be postgres / postgres
 - Full guide can be found here: https://www.postgresqltutorial.com/postgresql-getting-started/install-postgresql/
@@ -19,7 +22,7 @@ Enter your password when prompted.
     CREATE DATABASE bdd_workshop1;
     \q   <-- quit
 
-### Ubuntu / Linux - Installing PostgreSQL database for running the application on local machine
+### (Optional) Ubuntu / Linux - Installing PostgreSQL database for running the application on local machine
 Run the following command from a terminal window:
     
     sudo apt update sudo apt install postgresql postgresql-contrib
