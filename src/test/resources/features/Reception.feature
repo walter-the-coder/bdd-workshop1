@@ -46,3 +46,9 @@ Ability: Handle revieved data by checking if end-user is authorized and then sto
       | vatLines.vatLine[1].amount  | 50000                   |
     Then the response should be the following error
       | statusCode | 401 |
+
+  Scenario: When user login with a specific name, we should check that the name exists
+    When the user logs in with name
+      | firstname | John |
+      | lastname  | Deer |
+    Then the server should confirm that the user exists
