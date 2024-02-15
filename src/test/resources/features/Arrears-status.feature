@@ -2,12 +2,12 @@
 Ability: Display the arrears status
 
   Background:
-    Given taxpayer with id 101001554433 ha logged in
+    Given taxpayer with id 101001554433 is logged in
     And the taxpayer has selected certificate with name "TODO"
     And the taxpayer has selected certification type "Tax Clearance"
 
   @NotImplemented
-  Scenario: Display the arreas status when there unpaid taxes
+  Scenario: Display the arrears status when there are unpaid taxes
     Given the user has the following unpaid arrears
       | taxType | Domestic |
       | periode | JAN_FEB  |
