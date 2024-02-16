@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import com.bdd.workshop.client.dto.AuthorizationRequest;
 import com.bdd.workshop.client.dto.AuthorizationResponse;
 import com.bdd.workshop.type.OrganisationNumber;
-import com.bdd.workshop.type.PersonId;
+import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Request;
 
@@ -42,7 +42,7 @@ public final class AuthorizationServerSimulator extends Simulator {
         return postMappings;
     }
 
-    private final Map<PersonId, List<OrganisationNumber>> authorizedOrganisations =
+    private final Map<TaxpayerIdentificationNumber, List<OrganisationNumber>> authorizedOrganisations =
         Collections.synchronizedMap(new HashMap<>());
 
     @Override
@@ -50,14 +50,14 @@ public final class AuthorizationServerSimulator extends Simulator {
         authorizedOrganisations.clear();
     }
 
-    public void addAuthorizedOrganisations(PersonId personId, List<OrganisationNumber> organisations) {
-        authorizedOrganisations.put(personId, organisations);
+    public void addAuthorizedOrganisations(TaxpayerIdentificationNumber TaxpayerIdentificationNumber, List<OrganisationNumber> organisations) {
+        authorizedOrganisations.put(TaxpayerIdentificationNumber, organisations);
     }
 
     public ResponseDefinitionBuilder getAuthorizedOrganisations(Request request) {
-        PersonId personId = readJson(request, AuthorizationRequest.class).getPersonId();
+        TaxpayerIdentificationNumber TaxpayerIdentificationNumber = readJson(request, AuthorizationRequest.class).getPersonId();
         AuthorizationResponse response = new AuthorizationResponse(
-            authorizedOrganisations.get(personId)
+            authorizedOrganisations.get(TaxpayerIdentificationNumber)
         );
 
         return ResponseDefinitionBuilder.responseDefinition()

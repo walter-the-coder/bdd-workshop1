@@ -32,7 +32,9 @@ import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @AutoConfigureEmbeddedDatabase(
-    provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY,
+    beanName = "mainDatasource",
+    provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.EMBEDDED,
+    type = AutoConfigureEmbeddedDatabase.DatabaseType.H2,
     refresh = AutoConfigureEmbeddedDatabase.RefreshMode.BEFORE_EACH_TEST_METHOD
 )
 @ContextConfiguration(

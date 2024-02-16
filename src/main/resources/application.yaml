@@ -16,9 +16,11 @@ spring:
     profiles:
         active: local
     flyway:
-        enabled: true
+        main:
+            enabled: true
     datasource:
-        driver-class-name: org.postgresql.Driver
+        main:
+            driver-class-name: oracle.jdbc.OracleDriver
 
 springdoc:
     swagger-ui:

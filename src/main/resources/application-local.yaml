@@ -1,15 +1,16 @@
 ---
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:${DATABASE_PORT:5432}/bdd_workshop1
-        username: ${DATABASE_USER:postgres}
-        password: ${DATABASE_PASSWORD:postgres}
+        main:
+            url: jdbc:oracle:thin:@//localhost:${DATABASE_PORT:1521}/bdd_workshop1
+            username: ${DATABASE_USER:oracle}
+            password: ${DATABASE_PASSWORD:oracle}
 
     flyway:
-        url: ${spring.datasource.url}
-        user: ${spring.datasource.username}
-        password: ${spring.datasource.password}
-        baseline-on-migrate: true
+        main:
+            url: ${spring.datasource.main.url}
+            user: ${spring.datasource.main.username}
+            password: ${spring.datasource.main.password}
 
 security:
     enabled: false

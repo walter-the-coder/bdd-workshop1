@@ -21,6 +21,17 @@ public class CustomRuntimeException extends RuntimeException {
         this.httpStatus = httpStatus;
     }
 
+    public CustomRuntimeException(
+        String errorCode,
+        String errorMessage
+    ) {
+        super(errorMessage, null);
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.cause = null;
+        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
     public String getErrorCode() {
         return errorCode;
     }

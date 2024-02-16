@@ -2,29 +2,29 @@ package com.bdd.workshop.client.dto;
 
 import java.util.Objects;
 
-import com.bdd.workshop.type.PersonId;
+import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthorizationRequest {
-    private PersonId personId;
+    private TaxpayerIdentificationNumber TaxpayerIdentificationNumber;
 
     public AuthorizationRequest() {
-        personId = null;
+        TaxpayerIdentificationNumber = null;
     }
 
-    public AuthorizationRequest(PersonId personId) {
-        this.personId = personId;
+    public AuthorizationRequest(TaxpayerIdentificationNumber TaxpayerIdentificationNumber) {
+        this.TaxpayerIdentificationNumber = TaxpayerIdentificationNumber;
     }
 
-    public PersonId getPersonId() {
-        return personId;
+    public TaxpayerIdentificationNumber getPersonId() {
+        return TaxpayerIdentificationNumber;
     }
 
-    public void setPersonId(PersonId personId) {
-        this.personId = personId;
+    public void setPersonId(TaxpayerIdentificationNumber TaxpayerIdentificationNumber) {
+        this.TaxpayerIdentificationNumber = TaxpayerIdentificationNumber;
     }
 
     @Override
@@ -36,18 +36,18 @@ public class AuthorizationRequest {
             return false;
         }
         AuthorizationRequest that = (AuthorizationRequest) object;
-        return Objects.equals(personId, that.personId);
+        return Objects.equals(TaxpayerIdentificationNumber, that.TaxpayerIdentificationNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId);
+        return Objects.hash(TaxpayerIdentificationNumber);
     }
 
     @Override
     public String toString() {
         return "AuthorizationRequest{" +
-            "personId=" + personId +
+            "personId=" + TaxpayerIdentificationNumber +
             '}';
     }
 }

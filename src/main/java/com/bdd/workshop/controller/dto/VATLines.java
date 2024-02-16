@@ -16,14 +16,6 @@ public class VATLines {
         this.vatLines = new ArrayList<>();
     }
 
-    public VATLines(List<VATLine> vatLines) {
-        if (vatLines == null) {
-            this.vatLines = new ArrayList<>();
-        } else {
-            this.vatLines = vatLines;
-        }
-    }
-
     public List<VATLine> getVatLines() {
         return vatLines;
     }
@@ -54,5 +46,22 @@ public class VATLines {
         return "VATLines{" +
             "vatLines=" + vatLines +
             '}';
+    }
+
+    public static VATLines.Builder with() {
+        return new VATLines.Builder();
+    }
+
+    public static final class Builder {
+        private final VATLines dto = new VATLines();
+
+        public VATLines.Builder withVATLines(List<VATLine> vatLines) {
+            dto.vatLines = vatLines;
+            return this;
+        }
+
+        public VATLines build() {
+            return dto;
+        }
     }
 }
