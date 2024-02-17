@@ -2,15 +2,14 @@
 spring:
     datasource:
         main:
-            url: jdbc:oracle:thin:@//localhost:${DATABASE_PORT:1521}/bdd_workshop1
-            username: ${DATABASE_USER:oracle}
-            password: ${DATABASE_PASSWORD:oracle}
-
+            driver-class-name: org.h2.Driver
+            embedded: true
+        login:
+            driver-class-name: org.h2.Driver
+            embedded: true
     flyway:
-        main:
-            url: ${spring.datasource.main.url}
-            user: ${spring.datasource.main.username}
-            password: ${spring.datasource.main.password}
+        baseline-on-migrate: true
 
 security:
-    enabled: false
+    authorization:
+        enabled: false

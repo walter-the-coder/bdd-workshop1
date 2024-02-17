@@ -15,12 +15,13 @@ management:
 spring:
     profiles:
         active: local
-    flyway:
-        main:
-            enabled: true
     datasource:
         main:
             driver-class-name: oracle.jdbc.OracleDriver
+        login:
+            driver-class-name: oracle.jdbc.OracleDriver
+    flyway:
+        enabled: true
 
 springdoc:
     swagger-ui:
@@ -29,6 +30,3 @@ springdoc:
 clients:
     authorization:
         url: ${AUTHORIZATION_URL:http://localhost:8080}
-
-security:
-    enabled: true

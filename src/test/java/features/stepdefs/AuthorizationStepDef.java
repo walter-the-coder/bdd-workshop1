@@ -11,11 +11,12 @@ import io.cucumber.java.en.Given;
 
 public class AuthorizationStepDef {
 
-    @Given("user with person id {string} is authorized for the following organisations")
-    public void userWithPersonIdAndOrganisationNumberIsAuthorized(String personId, List<String> organisations) {
+    @Given("user with TIN {string} is authorized for the following organisations")
+    public void userWithPersonIdAndOrganisationNumberIsAuthorized(String taxpayerIdentificationNumber,
+        List<String> organisations) {
         AuthorizationServerSimulator.getInstance()
             .addAuthorizedOrganisations(
-                new TaxpayerIdentificationNumber(personId),
+                new TaxpayerIdentificationNumber(taxpayerIdentificationNumber),
                 organisations.stream().map(OrganisationNumber::new).collect(Collectors.toList())
             );
     }

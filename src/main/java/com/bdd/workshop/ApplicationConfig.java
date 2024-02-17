@@ -1,10 +1,9 @@
 package com.bdd.workshop;
 
-import java.sql.SQLException;
+import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.H2;
 
 import javax.sql.DataSource;
 
-import org.flywaydb.core.internal.jdbc.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,11 +11,12 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 
 import com.bdd.workshop.client.AuthorizationClient;
-import com.bdd.workshop.exceptionHandling.CustomRuntimeException;
 import com.bdd.workshop.exceptionHandling.CustomWebExceptionHandler;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -38,33 +38,41 @@ public class ApplicationConfig {
         return new AuthorizationClient(baseUrl);
     }
 
+    @Primary
     @Bean("mainDatasource")
     @ConfigurationProperties("spring.datasource.main")
-    public HikariDataSource mainDatasource() {
-        return DataSourceBuilder.create().type(HikariDataSource.class).build();
-    }
-
-    @Bean("mainDatasourceJdbcTemplate")
-    public JdbcTemplate mainDatasourceJdbcTemplate(
-        @Qualifier("mainDatasource") DataSource dsMain
+    public DataSource mainDatasource(
+        @Value("${spring.datasource.main.embedded:false}") Boolean embedded
     ) {
-        try {
-            return new JdbcTemplate(dsMain.getConnection());
-        } catch (SQLException e) {
-            throw new CustomRuntimeException(
-                "MAIN_DATASOURCE_FAILED",
-                "Could not get connection for main datasource",
-                e,
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+        if (embedded) {
+            return new EmbeddedDatabaseBuilder()
+                .setType(H2)
+                .build();
+        } else {
+            return DataSourceBuilder.create().type(HikariDataSource.class).build();
         }
     }
 
     @Bean("mainDatasourceNamedParameterJdbcTemplate")
     public NamedParameterJdbcTemplate mainDatasourceNamedParameterJdbcTemplate(
-        @Qualifier("mainDatasource") DataSource dsMain
+        @Qualifier("mainDatasource") DataSource mainDatasource
     ) {
-        return new NamedParameterJdbcTemplate(dsMain);
+        return new NamedParameterJdbcTemplate(mainDatasource);
+    }
+
+    @Bean("loginDatasource")
+    @ConfigurationProperties("spring.datasource.login")
+    public DataSource loginDatasource(
+        @Value("${spring.datasource.login.embedded:false}") Boolean embedded
+    ) {
+        if (embedded) {
+            return new EmbeddedDatabaseBuilder()
+                .setType(H2)
+                .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
+                .build();
+        } else {
+            return DataSourceBuilder.create().type(HikariDataSource.class).build();
+        }
     }
 
     @Bean

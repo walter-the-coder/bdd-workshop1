@@ -2,7 +2,7 @@
 Ability: Display the arrears status
 
   Background:
-    Given taxpayer with id 101001554433 is logged in
+    Given taxpayer with TIN 101099999 is logged in
     And the taxpayer has selected certificate with name "TODO"
     And the taxpayer has selected certification type "Tax Clearance"
 

@@ -8,12 +8,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import com.bdd.workshop.controller.dto.ReceptionDto;
 import com.bdd.workshop.controller.dto.ReceptionResponse;
 import com.bdd.workshop.controller.dto.ValidationResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import features.stepdefs.util.ReceptionDtoUtil;
 import io.cucumber.java.en.And;
@@ -21,19 +19,9 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class ReceptionStepDef {
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
     private ResponseEntity<ValidationResponse> validationResponse;
     private ResponseEntity<ReceptionResponse> submitResponse;
     private HttpStatusCodeException exception;
-
-    public ReceptionStepDef(
-        RestTemplate restTemplate,
-        ObjectMapper objectMapper
-    ) {
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-    }
 
     @When("the following data is validated")
     public void the_VAT_report_is_validated(Map<String, String> dataTable) {
@@ -47,7 +35,7 @@ public class ReceptionStepDef {
                 headers
             );
 
-            validationResponse = restTemplate.postForEntity(
+            validationResponse = LoginStepDep.restTemplate().postForEntity(
                 "/api/reception/validate",
                 request,
                 ValidationResponse.class
@@ -62,13 +50,14 @@ public class ReceptionStepDef {
         ReceptionDto vatReport = ReceptionDtoUtil.getReceptionDto(dataTable);
         try {
             HttpHeaders headers = new HttpHeaders();
+            headers.setBasicAuth(LoginStepDep.TIN.toString(), LoginStepDep.password);
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<ReceptionDto> request = new HttpEntity<>(
                 vatReport,
                 headers
             );
 
-            submitResponse = restTemplate.postForEntity(
+            submitResponse = LoginStepDep.restTemplate().postForEntity(
                 "/api/reception/submit",
                 request,
                 ReceptionResponse.class

@@ -36,7 +36,8 @@ public class CustomWebExceptionHandler {
         NoHandlerFoundException ex,
         HttpServletRequest request
     ) {
-        String formattedMessage = String.format("Endpoint %s %s does not exist", ex.getHttpMethod(), ex.getRequestURL());
+        String formattedMessage =
+            String.format("Endpoint %s %s does not exist", ex.getHttpMethod(), ex.getRequestURL());
         ErrorResponse errorResponse = new ErrorResponse("UNKNOWN_ENDPOINT", formattedMessage);
 
         return createResponseEntity(errorResponse, HttpStatus.NOT_FOUND, ex, request);
