@@ -29,22 +29,20 @@ public class TransactionRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        EmbeddedDatabase h2 =
-            (new EmbeddedDatabaseBuilder())
-                .setType(EmbeddedDatabaseType.H2)
-                .build();
+        EmbeddedDatabase h2 = new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.H2)
+            .build();
 
-        Flyway flyway = Flyway
+        Flyway
             .configure()
             .dataSource(h2)
             .cleanDisabled(false)
             .locations("classpath:/db/migration")
-            .load();
+            .load()
+            .migrate();
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(h2);
         transactionRepository = new TransactionRepository(jdbcTemplate, DEFAULT_OBJECT_MAPPER);
-
-        flyway.migrate();
     }
 
     @Test

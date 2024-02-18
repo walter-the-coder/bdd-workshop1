@@ -15,21 +15,21 @@ import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 public class AuthorizationService {
 
     private final AuthorizationClient authorizationClient;
-    private final Boolean securityEnabled;
+    private final Boolean authorizationEnabled;
 
     public AuthorizationService(
         AuthorizationClient authorizationClient,
-        @Value("${security.enabled}") Boolean securityEnabled
+        @Value("${security.authorization.enabled:true}") Boolean authorizationEnabled
     ) {
         this.authorizationClient = authorizationClient;
-        this.securityEnabled = securityEnabled;
+        this.authorizationEnabled = authorizationEnabled;
     }
 
     public void controlUserAccessToOrganisation(
         TaxpayerIdentificationNumber TaxpayerIdentificationNumber,
         OrganisationNumber organisationNumber
     ) {
-        if (!securityEnabled) {
+        if (!authorizationEnabled) {
             return;
         }
 
@@ -38,8 +38,8 @@ public class AuthorizationService {
         if (!usersOrganisations.contains(organisationNumber)) {
             throw new CustomRuntimeException(
                 "NOT_AUTHORIZED",
-                "User with id " + TaxpayerIdentificationNumber + " is not authorized to access organisation " + organisationNumber,
-                null,
+                "User with id " + TaxpayerIdentificationNumber + " is not authorized to access organisation "
+                    + organisationNumber,
                 HttpStatus.UNAUTHORIZED
             );
         }

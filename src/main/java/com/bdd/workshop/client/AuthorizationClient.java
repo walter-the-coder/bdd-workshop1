@@ -23,7 +23,8 @@ public class AuthorizationClient {
             .build();
     }
 
-    public List<OrganisationNumber> hasAccessToOrganisations(TaxpayerIdentificationNumber TaxpayerIdentificationNumber) {
+    public List<OrganisationNumber> hasAccessToOrganisations(
+        TaxpayerIdentificationNumber TaxpayerIdentificationNumber) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<AuthorizationRequest> request = new HttpEntity<>(

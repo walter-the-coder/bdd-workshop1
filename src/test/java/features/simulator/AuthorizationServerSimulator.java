@@ -50,12 +50,14 @@ public final class AuthorizationServerSimulator extends Simulator {
         authorizedOrganisations.clear();
     }
 
-    public void addAuthorizedOrganisations(TaxpayerIdentificationNumber TaxpayerIdentificationNumber, List<OrganisationNumber> organisations) {
+    public void addAuthorizedOrganisations(TaxpayerIdentificationNumber TaxpayerIdentificationNumber,
+        List<OrganisationNumber> organisations) {
         authorizedOrganisations.put(TaxpayerIdentificationNumber, organisations);
     }
 
     public ResponseDefinitionBuilder getAuthorizedOrganisations(Request request) {
-        TaxpayerIdentificationNumber TaxpayerIdentificationNumber = readJson(request, AuthorizationRequest.class).getPersonId();
+        TaxpayerIdentificationNumber TaxpayerIdentificationNumber =
+            readJson(request, AuthorizationRequest.class).getPersonId();
         AuthorizationResponse response = new AuthorizationResponse(
             authorizedOrganisations.get(TaxpayerIdentificationNumber)
         );

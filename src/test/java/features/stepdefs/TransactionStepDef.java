@@ -11,10 +11,10 @@ import com.bdd.workshop.repository.TransactionRepository;
 import features.stepdefs.util.ReceptionDtoUtil;
 import io.cucumber.java.en.And;
 
-public class TransactionSpedDef {
+public class TransactionStepDef {
     private final TransactionRepository transactionRepository;
 
-    public TransactionSpedDef(TransactionRepository transactionRepository) {
+    public TransactionStepDef(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
