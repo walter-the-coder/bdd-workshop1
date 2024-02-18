@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import com.bdd.workshop.client.dto.AuthorizationRequest;
 import com.bdd.workshop.client.dto.AuthorizationResponse;
 import com.bdd.workshop.type.OrganisationNumber;
-import com.bdd.workshop.type.PersonId;
+import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 
 public class AuthorizationClient {
     private final RestTemplate restTemplate;
@@ -23,11 +23,12 @@ public class AuthorizationClient {
             .build();
     }
 
-    public List<OrganisationNumber> hasAccessToOrganisations(PersonId personId) {
+    public List<OrganisationNumber> hasAccessToOrganisations(
+        TaxpayerIdentificationNumber TaxpayerIdentificationNumber) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<AuthorizationRequest> request = new HttpEntity<>(
-            new AuthorizationRequest(personId),
+            new AuthorizationRequest(TaxpayerIdentificationNumber),
             headers
         );
 

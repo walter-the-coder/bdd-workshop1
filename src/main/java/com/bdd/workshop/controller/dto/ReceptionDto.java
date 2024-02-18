@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.bdd.workshop.type.OrganisationNumber;
-import com.bdd.workshop.type.PersonId;
 import com.bdd.workshop.type.TaxCategory;
 import com.bdd.workshop.type.TaxationPeriodType;
+import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReceptionDto {
     private OrganisationNumber organisationNumber;
-    private PersonId submitterId;
+    private TaxpayerIdentificationNumber submitterId;
     private TaxCategory category;
     private Integer year;
     private TaxationPeriodType taxationPeriodType;
@@ -29,11 +29,11 @@ public class ReceptionDto {
         this.organisationNumber = organisationNumber;
     }
 
-    public PersonId getSubmitterId() {
+    public TaxpayerIdentificationNumber getSubmitterId() {
         return submitterId;
     }
 
-    public void setSubmitterId(PersonId submitterId) {
+    public void setSubmitterId(TaxpayerIdentificationNumber submitterId) {
         this.submitterId = submitterId;
     }
 
@@ -118,14 +118,12 @@ public class ReceptionDto {
     public static final class Builder {
         private final ReceptionDto dto = new ReceptionDto();
 
-        public static Builder aReceptionDto() { return new Builder(); }
-
         public Builder withOrganisationNumber(OrganisationNumber organisationNumber) {
             dto.organisationNumber = organisationNumber;
             return this;
         }
 
-        public Builder withSubmitterId(PersonId submitterId) {
+        public Builder withSubmitterId(TaxpayerIdentificationNumber submitterId) {
             dto.submitterId = submitterId;
             return this;
         }

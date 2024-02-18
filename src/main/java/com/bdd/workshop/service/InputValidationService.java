@@ -54,7 +54,6 @@ public class InputValidationService {
             throw new CustomRuntimeException(
                 "BAD_REQUEST",
                 errorMessage,
-                null,
                 HttpStatus.BAD_REQUEST
             );
         }
@@ -114,7 +113,6 @@ public class InputValidationService {
             throw new CustomRuntimeException(
                 "INVALID_VAT_VODE",
                 "Invalid VAT code " + vatLine.getVatCode(),
-                null,
                 HttpStatus.BAD_REQUEST
             );
         }

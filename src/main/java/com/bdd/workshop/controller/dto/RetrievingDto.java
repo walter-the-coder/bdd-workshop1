@@ -12,6 +12,7 @@ public class RetrievingDto {
     public RetrievingDto() {
         data = null;
     }
+
     public RetrievingDto(List<ReceptionDto> data) {
         this.data = data;
     }

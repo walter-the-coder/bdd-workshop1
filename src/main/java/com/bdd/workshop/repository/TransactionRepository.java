@@ -1,14 +1,17 @@
 package com.bdd.workshop.repository;
 
+import static com.bdd.workshop.util.JsonUtil.readJson;
+import static com.bdd.workshop.util.JsonUtil.writeAsJsonString;
+
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -16,11 +19,10 @@ import com.bdd.workshop.controller.dto.ReceptionDto;
 import com.bdd.workshop.controller.dto.VATLines;
 import com.bdd.workshop.exceptionHandling.CustomRuntimeException;
 import com.bdd.workshop.type.OrganisationNumber;
-import com.bdd.workshop.type.PersonId;
 import com.bdd.workshop.type.ReceptionStatus;
 import com.bdd.workshop.type.TaxCategory;
 import com.bdd.workshop.type.TaxationPeriodType;
-import com.bdd.workshop.util.JsonUtil;
+import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Repository
@@ -29,7 +31,7 @@ public class TransactionRepository {
     private final ObjectMapper objectMapper;
 
     public TransactionRepository(
-        NamedParameterJdbcTemplate jdbcTemplate,
+        @Qualifier("mainDatasourceNamedParameterJdbcTemplate") NamedParameterJdbcTemplate jdbcTemplate,
         ObjectMapper objectMapper
     ) {
         this.jdbcTemplate = jdbcTemplate;
@@ -37,47 +39,47 @@ public class TransactionRepository {
     }
 
     public void storeReceivedData(ReceptionDto data) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("organisationNumber", data.getOrganisationNumber().toString());
-        params.put("submitterId", data.getSubmitterId().toString());
-        params.put("category", data.getCategory().toString());
-        params.put("year", data.getYear());
-        params.put("taxationPeriodType", data.getTaxationPeriodType().toString());
-        params.put("timeOfSubmission", data.getTimeOfSubmission());
-        params.put("status", ReceptionStatus.RECEIVED.name());
-        params.put("vatLines", writeVATLines(data.getVatLines()));
+        MapSqlParameterSource paramSource = new MapSqlParameterSource();
+        paramSource.addValue("ORGANISATION_NUMBER", data.getOrganisationNumber().toString());
+        paramSource.addValue("SUBMITTER_TIN", data.getSubmitterId().toString());
+        paramSource.addValue("CATEGORY", data.getCategory().toString());
+        paramSource.addValue("TAXATION_YEAR", data.getYear());
+        paramSource.addValue("TAXATION_PERIOD_TYPE", data.getTaxationPeriodType().toString());
+        paramSource.addValue("TIME_OF_SUBMISSION", data.getTimeOfSubmission());
+        paramSource.addValue("STATUS", ReceptionStatus.RECEIVED.name());
+        paramSource.addValue("VAT_LINES", writeAsJsonString(objectMapper, data.getVatLines()));
 
         String sql =
-            "INSERT INTO transactions ("
-                + "organisationNumber, "
-                + "submitterId, "
-                + "category, "
-                + "year, "
-                + "taxationPeriodType, "
-                + "timeOfSubmission, "
-                + "status, "
-                + "vatLines"
+            "INSERT INTO TRANSACTIONS ("
+                + "ORGANISATION_NUMBER, "
+                + "SUBMITTER_TIN, "
+                + "CATEGORY, "
+                + "TAXATION_YEAR, "
+                + "TAXATION_PERIOD_TYPE, "
+                + "TIME_OF_SUBMISSION, "
+                + "STATUS, "
+                + "VAT_LINES"
                 + ")"
                 + " VALUES ("
-                + ":organisationNumber, "
-                + ":submitterId, "
-                + ":category, "
-                + ":year, "
-                + ":taxationPeriodType, "
-                + ":timeOfSubmission, "
-                + ":status, "
-                + ":vatLines"
+                + ":ORGANISATION_NUMBER, "
+                + ":SUBMITTER_TIN, "
+                + ":CATEGORY, "
+                + ":TAXATION_YEAR, "
+                + ":TAXATION_PERIOD_TYPE, "
+                + ":TIME_OF_SUBMISSION, "
+                + ":STATUS, "
+                + ":VAT_LINES"
                 + ")";
 
-        jdbcTemplate.update(sql, params);
+        jdbcTemplate.update(sql, paramSource);
     }
 
     public List<ReceptionDto> getUnprocessedData() {
         Map<String, String> values = new HashMap<>();
-        values.put("status", ReceptionStatus.RECEIVED.name());
+        values.put("STATUS", ReceptionStatus.RECEIVED.name());
 
         return jdbcTemplate.query(
-            "SELECT * FROM transactions WHERE status = :status",
+            "SELECT * FROM TRANSACTIONS WHERE STATUS = :STATUS",
             values,
             this::mapRow
         );
@@ -86,13 +88,13 @@ public class TransactionRepository {
     public ReceptionDto mapRow(ResultSet rs, int rowNum) {
         try {
             return ReceptionDto.with()
-                .withOrganisationNumber(new OrganisationNumber(rs.getString("organisationNumber")))
-                .withSubmitterId(new PersonId(rs.getString("submitterId")))
-                .withCategory(TaxCategory.valueOf(rs.getString("category")))
-                .withYear(rs.getInt("year"))
-                .withTaxationPeriodType(TaxationPeriodType.valueOf(rs.getString("taxationPeriodType")))
-                .withTimeOfSubmission(rs.getObject("timeOfSubmission", LocalDateTime.class))
-                .withVatLines(objectMapper.readValue(rs.getString("vatLines"), VATLines.class))
+                .withOrganisationNumber(new OrganisationNumber(rs.getString("ORGANISATION_NUMBER")))
+                .withSubmitterId(new TaxpayerIdentificationNumber(rs.getString("SUBMITTER_TIN")))
+                .withCategory(TaxCategory.valueOf(rs.getString("CATEGORY")))
+                .withYear(rs.getInt("TAXATION_YEAR"))
+                .withTaxationPeriodType(TaxationPeriodType.valueOf(rs.getString("TAXATION_PERIOD_TYPE")))
+                .withTimeOfSubmission(rs.getObject("TIME_OF_SUBMISSION", LocalDateTime.class))
+                .withVatLines(readJson(objectMapper, rs.getString("VAT_LINES"), VATLines.class))
                 .build();
         } catch (Exception e) {
             throw new CustomRuntimeException(
@@ -102,22 +104,5 @@ public class TransactionRepository {
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    }
-
-    private PGobject writeVATLines(VATLines vatLines) {
-        PGobject jsonObject = new PGobject();
-        String json = JsonUtil.writeJson(objectMapper, vatLines);
-        jsonObject.setType("jsonb");
-        try {
-            jsonObject.setValue(json);
-        } catch (SQLException e) {
-            throw new CustomRuntimeException(
-                "JSON_PGOBJECT_WRITING_ERROR",
-                "Failed to write JSON string to PGobject",
-                e,
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
-        return jsonObject;
     }
 }

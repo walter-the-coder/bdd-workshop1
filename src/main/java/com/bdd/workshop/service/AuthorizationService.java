@@ -9,36 +9,37 @@ import org.springframework.stereotype.Service;
 import com.bdd.workshop.client.AuthorizationClient;
 import com.bdd.workshop.exceptionHandling.CustomRuntimeException;
 import com.bdd.workshop.type.OrganisationNumber;
-import com.bdd.workshop.type.PersonId;
+import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 
 @Service
 public class AuthorizationService {
 
     private final AuthorizationClient authorizationClient;
-    private final Boolean securityEnabled;
+    private final Boolean authorizationEnabled;
 
     public AuthorizationService(
         AuthorizationClient authorizationClient,
-        @Value("${security.enabled}") Boolean securityEnabled
+        @Value("${security.authorization.enabled:true}") Boolean authorizationEnabled
     ) {
         this.authorizationClient = authorizationClient;
-        this.securityEnabled = securityEnabled;
+        this.authorizationEnabled = authorizationEnabled;
     }
 
     public void controlUserAccessToOrganisation(
-        PersonId personId,
+        TaxpayerIdentificationNumber TaxpayerIdentificationNumber,
         OrganisationNumber organisationNumber
     ) {
-        if (!securityEnabled) {
+        if (!authorizationEnabled) {
             return;
         }
 
-        List<OrganisationNumber> usersOrganisations = authorizationClient.hasAccessToOrganisations(personId);
+        List<OrganisationNumber> usersOrganisations = authorizationClient.hasAccessToOrganisations(
+            TaxpayerIdentificationNumber);
         if (!usersOrganisations.contains(organisationNumber)) {
             throw new CustomRuntimeException(
                 "NOT_AUTHORIZED",
-                "User with id " + personId + " is not authorized to access organisation " + organisationNumber,
-                null,
+                "User with id " + TaxpayerIdentificationNumber + " is not authorized to access organisation "
+                    + organisationNumber,
                 HttpStatus.UNAUTHORIZED
             );
         }

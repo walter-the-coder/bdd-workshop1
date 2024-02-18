@@ -8,14 +8,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PersonId {
+public class TaxpayerIdentificationNumber {
     private String value;
 
-    public PersonId() {
+    public TaxpayerIdentificationNumber() {
         this.value = null;
     }
 
-    public PersonId(String value) {
+    public TaxpayerIdentificationNumber(String value) {
         this.value = value;
     }
 
@@ -36,8 +36,8 @@ public class PersonId {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        PersonId personId = (PersonId) object;
-        return Objects.equals(value, personId.value);
+        TaxpayerIdentificationNumber TaxpayerIdentificationNumber = (TaxpayerIdentificationNumber) object;
+        return Objects.equals(value, TaxpayerIdentificationNumber.value);
     }
 
     @Override

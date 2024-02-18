@@ -19,15 +19,15 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
 
-    <postgresql.version>42.7.1</postgresql.version>
+    <ojdbc8.version>19.3.0.0</ojdbc8.version>
     <flyway.version>9.22.3</flyway.version>
 
     <!-- Test frameworks -->
     <cucumber.version>7.14.1</cucumber.version>
     <cucumber-messages.version>22.0.0</cucumber-messages.version>
     <junit-jupiter.version>5.10.1</junit-jupiter.version>
-    <zonky-spring.version>2.4.0</zonky-spring.version>
-    <zonky-embedded-postgres.version>2.0.6</zonky-embedded-postgres.version>
+    <zonky-spring.version>2.5.0</zonky-spring.version>
+    <h2.version>2.2.224</h2.version>
     <mockito.version>5.9.0</mockito.version>
   </properties>
 
@@ -42,12 +42,20 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>${postgresql.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.ojdbc</groupId>
+      <artifactId>ojdbc8</artifactId>
+      <version>${ojdbc8.version}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -149,11 +157,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- In-memory-database -->
     <dependency>
-      <groupId>io.zonky.test</groupId>
-      <artifactId>embedded-postgres</artifactId>
-      <version>${zonky-embedded-postgres.version}</version>
-      <scope>test</scope>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <!--<scope>test</scope>-->
     </dependency>
 
     <!-- Mock HTTP-server -->

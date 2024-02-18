@@ -10,15 +10,15 @@ import com.bdd.workshop.controller.dto.VATCode;
 import com.bdd.workshop.controller.dto.VATLine;
 import com.bdd.workshop.controller.dto.VATLines;
 import com.bdd.workshop.type.OrganisationNumber;
-import com.bdd.workshop.type.PersonId;
 import com.bdd.workshop.type.TaxCategory;
 import com.bdd.workshop.type.TaxationPeriodType;
+import com.bdd.workshop.type.TaxpayerIdentificationNumber;
 
 public final class ReceptionDtoUtil {
     public static ReceptionDto getReceptionDto(Map<String, String> dataTable) {
         return ReceptionDto.with()
             .withOrganisationNumber(new OrganisationNumber(dataTable.get("organisationNumber")))
-            .withSubmitterId(new PersonId(dataTable.get("submitterId")))
+            .withSubmitterId(new TaxpayerIdentificationNumber(dataTable.get("submitterId")))
             .withCategory(TaxCategory.valueOf(dataTable.get("taxCategory")))
             .withYear(Integer.parseInt(dataTable.get("year")))
             .withTaxationPeriodType(TaxationPeriodType.valueOf(dataTable.get("taxationPeriod")))
@@ -35,14 +35,17 @@ public final class ReceptionDtoUtil {
                 dataTable.containsKey(vatLinePrefix(lineIndex) + ".amount")
         ) {
             vatLines.add(
-                new VATLine(
-                    Integer.parseInt(dataTable.get(vatLinePrefix(lineIndex) + ".vatCode")),
-                    Double.parseDouble(dataTable.get(vatLinePrefix(lineIndex) + ".amount"))
-                )
+                VATLine.with()
+                    .withVATCode(
+                        VATCode.fromCode(Integer.parseInt(dataTable.get(vatLinePrefix(lineIndex) + ".vatCode")))
+                    )
+                    .withAmount(Double.parseDouble(dataTable.get(vatLinePrefix(lineIndex) + ".amount")))
+                    .build()
+
             );
             lineIndex++;
         }
-        return new VATLines(vatLines);
+        return VATLines.with().withVATLines(vatLines).build();
     }
 
     private static String vatLinePrefix(Integer lineIndex) {

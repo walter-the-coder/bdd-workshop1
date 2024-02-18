@@ -15,10 +15,13 @@ management:
 spring:
     profiles:
         active: local
+    datasource:
+        main:
+            driver-class-name: oracle.jdbc.OracleDriver
+        login:
+            driver-class-name: oracle.jdbc.OracleDriver
     flyway:
         enabled: true
-    datasource:
-        driver-class-name: org.postgresql.Driver
 
 springdoc:
     swagger-ui:
@@ -27,6 +30,3 @@ springdoc:
 clients:
     authorization:
         url: ${AUTHORIZATION_URL:http://localhost:8080}
-
-security:
-    enabled: true

@@ -16,25 +16,40 @@ import com.bdd.workshop.Main;
 import features.simulator.common.Simulator;
 import io.cucumber.core.options.Constants;
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import io.zonky.test.db.AutoConfigureEmbeddedDatabases;
 
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
-@ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "pretty, json:target/cucumber-report.json")
+@ConfigurationParameter(
+    key = Constants.PLUGIN_PROPERTY_NAME,
+    value = "pretty, json:target/cucumber-report.json"
+)
 @ConfigurationParameter(
     key = Constants.GLUE_PROPERTY_NAME,
     value = "features"
 )
 @ExcludeTags("NotImplemented")
-@CucumberContextConfiguration
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@AutoConfigureEmbeddedDatabase(
-    provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY,
-    refresh = AutoConfigureEmbeddedDatabase.RefreshMode.BEFORE_EACH_TEST_METHOD
-)
+@AutoConfigureEmbeddedDatabases({
+    @AutoConfigureEmbeddedDatabase(
+        beanName = "mainDatasource",
+        provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.EMBEDDED,
+        type = AutoConfigureEmbeddedDatabase.DatabaseType.H2,
+        refresh = AutoConfigureEmbeddedDatabase.RefreshMode.BEFORE_EACH_TEST_METHOD
+    ),
+    @AutoConfigureEmbeddedDatabase(
+        beanName = "loginDatasource",
+        provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.EMBEDDED,
+        type = AutoConfigureEmbeddedDatabase.DatabaseType.H2,
+        refresh = AutoConfigureEmbeddedDatabase.RefreshMode.BEFORE_EACH_TEST_METHOD
+    )
+})
+@CucumberContextConfiguration
 @ContextConfiguration(
     classes = { CucumberTestConfig.class }
 )
@@ -44,9 +59,7 @@ import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 )
 public class RunCucumberTest {
     @Before
-    void runBeforeScenarioHook() {
+    public void before(Scenario scenario) {
         Simulator.SimulatorFactory.resetAll();
     }
 }
-
-
