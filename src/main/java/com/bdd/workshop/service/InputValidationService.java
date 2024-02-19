@@ -60,7 +60,7 @@ public class InputValidationService {
     }
 
     public void validateYear(Integer year, Map<String, String> validationErrors) {
-        if (year != 2024) {
+        if (year == null || year != 2024) {
             validationErrors.put("year", "Invalid year: " + year + ". "
                 + "We only allow submissions for year 2024 at the moment");
         }
