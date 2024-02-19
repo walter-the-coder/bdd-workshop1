@@ -21,16 +21,7 @@ public class InputValidationServiceTest {
 
     @Test
     void test_validate_valid_year() {
-        ReceptionDto data = ReceptionDto.with()
-            .withOrganisationNumber(new OrganisationNumber("123456789"))
-            .withSubmitterId(new TaxpayerIdentificationNumber("01012012345"))
-            .withCategory(TaxCategory.NORMAL)
-            .withYear(2024)
-            .withTaxationPeriodType(TaxationPeriodType.JAN_FEB)
-            .withTimeOfSubmission(LocalDate.of(2024, 1, 1).atStartOfDay())
-            .withVatLines(VATLines.with().build())
-            .build();
-
+        ReceptionDto data = synthesizeWithYear(2024);
         ValidationResponse response = inputValidationService.validate(data);
         Assertions.assertTrue(response.getValidationErrors().isEmpty());
     }
@@ -43,13 +34,13 @@ public class InputValidationServiceTest {
         boundaryValues.add(null);
 
         boundaryValues.forEach(year -> {
-            ReceptionDto data = synthesize(year);
+            ReceptionDto data = synthesizeWithYear(year);
             ValidationResponse response = inputValidationService.validate(data);
             Assertions.assertEquals(1, response.getValidationErrors().size());
         });
     }
 
-    private ReceptionDto synthesize(Integer year) {
+    private ReceptionDto synthesizeWithYear(Integer year) {
         return ReceptionDto.with()
             .withOrganisationNumber(new OrganisationNumber("123456789"))
             .withSubmitterId(new TaxpayerIdentificationNumber("01012012345"))
