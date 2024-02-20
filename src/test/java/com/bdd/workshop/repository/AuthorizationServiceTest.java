@@ -9,6 +9,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -18,13 +23,22 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { AuthorizationClientTestConfiguration.class })
+@SpringBootTest(classes = { AuthorizationServiceTest.TestConfiguration.class })
 public class AuthorizationServiceTest {
-    @Autowired
+    @MockBean
     AuthorizationClient authorizationClient;
     @Autowired
     AuthorizationService authorizationService;
-
+    @Profile("test")
+    @Configuration
+    static class TestConfiguration {
+        public AuthorizationService authorizationService = new AuthorizationService(true);
+        @Bean
+        @Primary
+        public AuthorizationService authorizationService() {
+            return authorizationService;
+        }
+    }
     @Test
     public void should_succeed_when_right_TIN_and_organization_number_is_used() {
         // GIVEN
