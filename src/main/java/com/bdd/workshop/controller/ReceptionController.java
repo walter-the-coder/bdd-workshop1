@@ -1,11 +1,7 @@
 package com.bdd.workshop.controller;
 
-import java.util.Objects;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,17 +26,6 @@ public class ReceptionController {
     ) {
         this.receptionService = receptionService;
         this.inputValidationService = inputValidationService;
-    }
-
-    @GetMapping(value = "/validateName/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> validate(
-        @PathVariable String name
-    ) {
-        if (Objects.equals(name, "John Deer")) {
-            return ResponseEntity.ok(true);
-        }
-
-        return ResponseEntity.badRequest().body(false);
     }
 
     @PostMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
